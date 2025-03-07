@@ -1,0 +1,26 @@
+---
+- name: Deploy Slurm controllers
+  hosts: slurm_controllers
+  become: true
+  roles:
+    - role: slurm
+      vars:
+        slurm_node_type: controller
+    - role: enroot
+
+- name: Deploy Slurm compute nodes
+  hosts: slurm_computes
+  become: true
+  roles:
+    - role: slurm
+      vars:
+        slurm_node_type: compute
+    - role: enroot
+
+- name: Deploy Slurm submit nodes
+  hosts: slurm_submits
+  become: true
+  roles:
+    - role: slurm
+      vars:
+        slurm_node_type: submit

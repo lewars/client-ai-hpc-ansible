@@ -1,0 +1,28 @@
+slurm_version: "23.02.6"
+slurm_user: "slurm"
+slurm_group: "slurm"
+
+slurm_cluster_name: "{{ env }}-cluster"
+slurm_control_machine: "slurmctl01.{{ env }}"
+
+slurm_conf_dir: "/etc/slurm"
+slurm_log_dir: "/var/log/slurm"
+slurm_state_dir: "/var/spool/slurm"
+
+environments:
+  lab:
+    max_jobs: 100
+    debug_flags: "debug_all"
+    backup_enabled: false
+  dev:
+    max_jobs: 1000
+    debug_flags: "debug_simple"
+    backup_enabled: true
+  prod:
+    max_jobs: 10000
+    debug_flags: "none"
+    backup_enabled: true
+
+slurm_max_jobs: "{{ environments[env].max_jobs }}"
+slurm_debug_flags: "{{ environments[env].debug_flags }}"
+slurm_backup_enabled: "{{ environments[env].backup_enabled }}"

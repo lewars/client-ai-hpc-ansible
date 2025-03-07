@@ -1,0 +1,21 @@
+# Ansible
+*.retry
+*.pyc
+.cache/
+
+# Vault files
+vault.key
+*vault.yml
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Environment specific
+# inventory/dev/
+# inventory/prod/
+
+# Logs and temp files
+/logs/
+.DS_Store

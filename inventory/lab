@@ -1,0 +1,32 @@
+# -*- mode: conf-unix -*-
+
+[slurm_controllers]
+slurmctl01.lab ansible_host=192.168.1.10
+slurmdbctl01.lab ansible_host=192.168.1.11
+
+[slurm_computes]
+compute[01:04].lab ansible_host=192.168.1.[21:24]
+
+[slurm_submits]
+submit[01:02].lab ansible_host=192.168.1.[31:32]
+
+[rhel:children]
+slurm_controllers
+
+[ubuntu:children]
+slurm_computes
+
+[slurm:children]
+slurm_controllers
+slurm_computes
+slurm_submits
+
+[rhel:vars]
+ansible_python_interpreter=/usr/libexec/platform-python
+ansible_distribution=RedHat
+ansible_distribution_major_version=9
+
+[ubuntu:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_distribution=Ubuntu
+ansible_distribution_major_version=22
