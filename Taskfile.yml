@@ -2,15 +2,17 @@
 version: "3"
 
 vars:
+  PROJECT: ai-hpc-ansible
   VENV_NAME: .venv
-  ENV: lab  # Default environment
+  ENV: lab
+  PYTHON_VERSION: 3.9.12
 
 tasks:
   info:
     desc: Show project information
     cmds:
       - |
-          echo "Project: ai-hpc-ansible"
+          echo "Project: {{.PROJECT}}"
           echo "Version: 0.1.0"
           echo "Author: Alistair Y. Lewars"
           echo "Current Environment: {{.ENV}}"
@@ -24,14 +26,9 @@ tasks:
     desc: Create a Python 3.9.21 virtual environment
     cmds:
       - |
-        echo "Creating virtual environment {{.VENV_NAME}}"
+        echo "Creating virtual environment {{.VENV_NAME}} with {{.PYTHON_VERSION}}"
+        uv python install {{.PYTHON_VERSION}}
         uv venv {{.VENV_NAME}}
-
-  activate:
-    desc: Activate the virtual environment
-    cmds:
-      - echo "Activating virtual environment {{.VENV_NAME}}"
-      - source {{.VENV_NAME}}/bin/activate
 
   lint:
     desc: Lint Ansible code
@@ -53,8 +50,9 @@ tasks:
   deploy:
     desc: Deploy to the specified environment (lab, dev, prod)
     cmds:
-      - echo "Deploying to {{.ENV}} environment"
-      - ansible-playbook -i inventory/{{.ENV}} playbook.yml
+      - |
+        echo "Deploying to {{.ENV}} environment"
+        ansible-playbook -i inventory/{{.ENV}} playbook.yml
 
   deploy_lab:
     desc: Deploy to lab environment
