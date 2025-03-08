@@ -3,7 +3,7 @@ name = "ai-hpc-ansible"
 version = "0.1.0"
 description = "Ansible project for deploying and managing AI/HPC infrastructure"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.12"
 authors = [
   { name = "Alistair Y. Lewars" },
 ]

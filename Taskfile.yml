@@ -23,12 +23,21 @@ tasks:
       - command -v uv || pip install uv
 
   venv:
-    desc: Create a Python 3.9.21 virtual environment
+    desc: Create a Python virtual environment
     cmds:
       - |
-        echo "Creating virtual environment {{.VENV_NAME}} with {{.PYTHON_VERSION}}"
-        uv python install {{.PYTHON_VERSION}}
+        echo "Creating virtual environment {{.VENV_NAME}}"
         uv venv {{.VENV_NAME}}
+
+
+  install-deps:
+    desc: Install Python dependencies
+    cmds:
+      - |
+        echo "Installing Python dependencies..."
+        bash -c "source {{.VENV_NAME}}/bin/activate"
+        uv pip install --upgrade pip
+        uv pip install -r requirements.txt
 
   lint:
     desc: Lint Ansible code
@@ -40,12 +49,22 @@ tasks:
     cmds:
       - ansible-playbook --syntax-check playbook.yml
 
-  test:
-    desc: Run Molecule tests with Testinfra
+  test:role:
+    desc: Test a specific role with Molecule using TestInfra
     cmds:
-      - cd roles/enroot && molecule test
-      - cd roles/nvidia && molecule test
-      - cd roles/pyxis && molecule test
+      - cd roles/{{.ROLE}} && molecule test
+    requires:
+      vars: [ROLE]
+
+  test:all:
+    desc: Test all roles with Molecule
+    cmds:
+      - |
+        for role in roles/*; do
+          if [ -d "$role/molecule" ]; then
+            cd $role && molecule test && cd ../..
+          fi
+        done
 
   deploy:
     desc: Deploy to the specified environment (lab, dev, prod)
