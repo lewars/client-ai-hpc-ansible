@@ -80,11 +80,6 @@ tasks:
     cmds:
       - cd roles/nvidia && molecule test
 
-  test:nvidia:lint:
-    desc: Run only the lint step for the NVIDIA role
-    cmds:
-      - cd roles/nvidia && molecule lint
-
   test:nvidia:verify:
     desc: Run only the verify step for the NVIDIA role
     deps: [test:nvidia:destroy]

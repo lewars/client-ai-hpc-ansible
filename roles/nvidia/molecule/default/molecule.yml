@@ -11,8 +11,8 @@ platforms:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - ${MOLECULE_PROJECT_DIRECTORY}/tests/mock/opt:/opt:ro
     tmpfs:
-      - /tmp
-      - /run
+      /tmp: ""
+      /run: ""
     environment:
       container: podman
   - name: ubuntu2404-instance
@@ -24,8 +24,8 @@ platforms:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - ${MOLECULE_PROJECT_DIRECTORY}/tests/mock/opt:/opt:ro
     tmpfs:
-      - /tmp
-      - /run
+      /tmp: ""
+      /run: ""
     environment:
       container: podman
       DEBIAN_FRONTEND: noninteractive
@@ -41,10 +41,6 @@ provisioner:
         nvidia_testing_mode: true
         # Override commands that would normally require actual hardware
         nvidia_driver_check_command: "echo 'NVIDIA-SMI has failed'"
-lint: |
-  set -e
-  yamllint -c ${MOLECULE_PROJECT_DIRECTORY}/.yamllint .
-  ansible-lint -c ${MOLECULE_PROJECT_DIRECTORY}/.ansible-lint
 verifier:
   name: testinfra
   options:
@@ -53,7 +49,6 @@ verifier:
 scenario:
   test_sequence:
     - dependency
-    - lint
     - cleanup
     - destroy
     - syntax
