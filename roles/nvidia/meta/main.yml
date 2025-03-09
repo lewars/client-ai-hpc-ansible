@@ -1,0 +1,27 @@
+---
+role_info:
+  role_name: nvidia
+  author: Alistair Y. Lewars
+  description: Installs and configures NVIDIA drivers and related components for HPC environments
+  company: AI Factory
+  license: MIT
+  min_ansible_version: 2.14.0
+
+  platforms:
+    - name: EL
+      versions:
+        - 9
+    - name: Ubuntu
+      versions:
+        - noble
+
+  tags:
+    - nvidia
+    - gpu
+    - driver
+    - cuda
+    - hpc
+    - ai
+    - ml
+
+dependencies: []

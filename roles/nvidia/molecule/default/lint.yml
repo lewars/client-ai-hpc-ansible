@@ -1,0 +1,14 @@
+---
+name: Lint
+# Custom linting configuration for local testing
+on:
+  lint:
+provisioner:
+  name: ansible-lint
+  options:
+    config-file: ${MOLECULE_PROJECT_DIRECTORY}/.ansible-lint
+    force-color: true
+lint: |
+  set -e
+  yamllint -c ${MOLECULE_PROJECT_DIRECTORY}/.yamllint .
+  ansible-lint -c ${MOLECULE_PROJECT_DIRECTORY}/.ansible-lint

@@ -1,0 +1,47 @@
+# -*- mode: yaml; -*-
+---
+# .ansible-lint configuration
+
+# Exclude folders and files from linting
+exclude_paths:
+  - .cache/
+  - .github/
+  - .venv/
+  - molecule/
+  - tests/
+  - .yamllint
+
+# Enable checking of loop variable prefixes in roles
+loop_var_prefix: "^(__|{role}_)"
+
+# List of additional kinds of tags to be checked for rule tag-missing
+# off by default
+kinds:
+  - playbook: "playbooks/*.yml"
+  - tasks: "**/tasks/*.yml"
+  - handlers: "**/handlers/*.yml"
+  - vars: "**/vars/*.yml"
+  - defaults: "**/defaults/*.yml"
+  - meta: "**/meta/*.yml"
+
+# Various rule adjustments to silence false positives
+# or to adjust rule behavior
+skip_list:
+  - fqcn[action-core]  # Using legacy module names (e.g. `command` instead of `ansible.builtin.command`)
+  - name[template]     # Rule enforcing name task conventions
+  - yaml[line-length]  # Line length rules
+  - var-naming[no-role-prefix]  # Rule enforcing variable naming conventions
+  - jinja[spacing]     # Rule enforcing Jinja2 spacing
+  - role-name[path]    # Allow role name to differ from directory name
+  - schema             # Skip schema validation while developing
+
+# Enable some optional rules that are off by default
+enable_list:
+  - no-log-password  # Warn when password logging is disabled
+  - no-same-owner    # Warn when the owner is not defined explicitly
+  - yaml             # Enable YAML linting
+
+# Use more targeted rules
+warn_list:
+  - experimental     # Experimental features
+  - role-name        # Role name not matching pattern
