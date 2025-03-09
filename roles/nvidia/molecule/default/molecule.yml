@@ -10,9 +10,6 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - ${MOLECULE_PROJECT_DIRECTORY}/tests/mock/opt:/opt:ro
-    tmpfs:
-      /tmp: ""
-      /run: ""
     environment:
       container: podman
   - name: ubuntu2404-instance
@@ -23,9 +20,6 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - ${MOLECULE_PROJECT_DIRECTORY}/tests/mock/opt:/opt:ro
-    tmpfs:
-      /tmp: ""
-      /run: ""
     environment:
       container: podman
       DEBIAN_FRONTEND: noninteractive
