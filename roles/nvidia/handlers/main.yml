@@ -1,0 +1,14 @@
+---
+- name: restart nvidia-persistenced
+  ansible.builtin.service:
+    name: nvidia-persistenced
+    state: restarted
+  when: not nvidia_testing_mode
+
+- name: restart nvidia-fabricmanager
+  ansible.builtin.service:
+    name: nvidia-fabricmanager
+    state: restarted
+  when:
+    - nvidia_fabricmanager_enabled | bool
+    - not nvidia_testing_mode

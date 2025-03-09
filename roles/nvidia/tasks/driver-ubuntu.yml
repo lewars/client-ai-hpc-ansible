@@ -1,0 +1,74 @@
+---
+- name: Check if local repo DEB exists
+  ansible.builtin.stat:
+    path: "{{ nvidia_local_repo_deb }}"
+  register: local_repo_deb
+  tags:
+    - nvidia
+    - nvidia_repo
+
+- name: Install NVIDIA local repository DEB
+  ansible.builtin.apt:
+    deb: "{{ nvidia_local_repo_deb }}"
+    state: present
+  when: local_repo_deb.stat.exists and not nvidia_testing_mode
+  tags:
+    - nvidia
+    - nvidia_repo
+
+- name: Add NVIDIA repo GPG key
+  ansible.builtin.command: >
+    cp /var/{{ nvidia_repo_path }}/{{ nvidia_local_repo_deb }}/cuda-{{ nvidia_ubuntu_repo_name }}.gpg
+    /usr/share/keyrings/cuda-archive-keyring.gpg
+  args:
+    creates: /usr/share/keyrings/cuda-archive-keyring.gpg
+  when: local_repo_deb.stat.exists and not nvidia_testing_mode
+  tags:
+    - nvidia
+    - nvidia_repo
+
+- name: Set repository pin preference
+  ansible.builtin.copy:
+    dest: /etc/apt/preferences.d/cuda-repository-pin-600
+    content: |
+      Package: cuda*
+      Pin: origin "developer.download.nvidia.com"
+      Pin-Priority: 600
+    mode: '0644'
+    owner: root
+    group: root
+  when: not nvidia_testing_mode
+  tags:
+    - nvidia
+    - nvidia_repo
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+  when: not nvidia_testing_mode
+  tags:
+    - nvidia
+    - nvidia_repo
+
+- name: Install NVIDIA driver and CUDA packages
+  ansible.builtin.apt:
+    name:
+      - nvidia-driver-{{ nvidia_driver_version.split('.')[0] }}
+      - nvidia-persistenced
+      - cuda
+    state: present
+  when: not nvidia_testing_mode
+  tags:
+    - nvidia
+    - nvidia_driver
+
+- name: Install NVIDIA Fabric Manager (optional)
+  ansible.builtin.apt:
+    name: nvidia-fabricmanager
+    state: present
+  when:
+    - nvidia_install_fabricmanager | bool
+    - not nvidia_testing_mode
+  tags:
+    - nvidia
+    - nvidia_fabricmanager

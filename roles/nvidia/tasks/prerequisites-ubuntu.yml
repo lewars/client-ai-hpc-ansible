@@ -1,0 +1,38 @@
+---
+- name: Install required packages for Ubuntu
+  ansible.builtin.apt:
+    name:
+      - linux-headers-{{ ansible_kernel }}
+      - build-essential
+      - dkms
+      - gcc
+      - make
+      - libvulkan1
+      - vulkan-tools
+      - vulkan-validationlayers
+    state: present
+    update_cache: true
+  tags:
+    - nvidia
+    - nvidia_packages
+
+- name: Disable Nouveau driver
+  ansible.builtin.copy:
+    dest: /etc/modprobe.d/blacklist-nouveau.conf
+    content: |
+      blacklist nouveau
+      options nouveau modeset=0
+    mode: '0644'
+    owner: root
+    group: root
+  register: nouveau_blacklist
+  tags:
+    - nvidia
+    - nvidia_nouveau
+
+- name: Update initramfs if Nouveau was disabled
+  ansible.builtin.command: update-initramfs -u
+  when: nouveau_blacklist.changed
+  tags:
+    - nvidia
+    - nvidia_nouveau

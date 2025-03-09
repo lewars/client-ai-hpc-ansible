@@ -1,0 +1,69 @@
+---
+- name: Include OS-specific variables
+  ansible.builtin.include_vars: "{{ item }}"
+  with_first_found:
+    # TODO: (alistair): check if any of this is needed
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_os_family | lower }}.yml"
+    - "default.yml"
+  tags:
+    - always
+
+- name: Check if NVIDIA driver is already installed
+  ansible.builtin.command: "{{ nvidia_driver_check_command }}"
+  register: nvidia_driver_check
+  ignore_errors: true
+  changed_when: false
+  check_mode: false
+  tags:
+    - nvidia
+    - nvidia_driver
+
+- name: Install prerequisites for NVIDIA driver installation
+  ansible.builtin.include_tasks: "prerequisites-{{ ansible_os_family | lower }}.yml"
+  when: nvidia_driver_check.rc != 0
+  tags:
+    - nvidia
+    - nvidia_driver
+
+- name: Install NVIDIA driver from local repository
+  ansible.builtin.include_tasks: "driver-{{ ansible_os_family | lower }}.yml"
+  when:
+    - nvidia_driver_check.rc != 0
+    - nvidia_install_from_local_repo | bool
+  tags:
+    - nvidia
+    - nvidia_driver
+
+- name: Configure CUDA environment
+  ansible.builtin.include_tasks: "cuda.yml"
+  when: nvidia_cuda_initialize | bool
+  tags:
+    - nvidia
+    - nvidia_cuda
+
+- name: Configure NVIDIA persistence daemon
+  ansible.builtin.include_tasks: "persistence.yml"
+  when: nvidia_install_persistence_daemon | bool
+  tags:
+    - nvidia
+    - nvidia_persistence
+
+- name: Configure NVIDIA Fabric Manager
+  ansible.builtin.include_tasks: "fabricmanager.yml"
+  when: nvidia_install_fabricmanager | bool
+  tags:
+    - nvidia
+    - nvidia_fabricmanager
+
+- name: Restart system if needed
+  ansible.builtin.reboot:
+    reboot_timeout: 600
+    post_reboot_delay: 30
+  when:
+    - nvidia_driver_check.rc != 0
+    - nvidia_restart_after_install | bool
+    - not nvidia_testing_mode | bool
+  tags:
+    - nvidia
+    - nvidia_reboot

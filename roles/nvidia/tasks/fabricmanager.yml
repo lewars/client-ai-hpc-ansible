@@ -1,0 +1,12 @@
+---
+- name: Enable and start NVIDIA Fabric Manager
+  ansible.builtin.service:
+    name: nvidia-fabricmanager
+    state: started
+    enabled: true
+  when:
+    - nvidia_fabricmanager_enabled | bool
+    - not nvidia_testing_mode
+  tags:
+    - nvidia
+    - nvidia_fabricmanager

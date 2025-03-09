@@ -1,0 +1,8 @@
+#!/bin/bash
+# CUDA environment variables
+# {{ ansible_managed }}
+{% if nvidia_enable_cuda_in_path %}
+export PATH=/usr/local/cuda-{{ nvidia_cuda_version }}/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-{{ nvidia_cuda_version }}/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+export CUDA_HOME=/usr/local/cuda-{{ nvidia_cuda_version }}
+{% endif %}

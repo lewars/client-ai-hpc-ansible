@@ -1,0 +1,7 @@
+---
+- name: Verify Syntax
+  hosts: all
+  tasks:
+    - name: Syntax check only
+      ansible.builtin.debug:
+        msg: "Syntax check passed"

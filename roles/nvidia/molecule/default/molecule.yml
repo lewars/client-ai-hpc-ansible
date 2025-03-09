@@ -38,9 +38,13 @@ provisioner:
       all:
         # Mock variables for testing - these will create test stubs/mocks
         # rather than actually trying to install real NVIDIA drivers
-        nvidia_testing_mode: false
+        nvidia_testing_mode: true
         # Override commands that would normally require actual hardware
         nvidia_driver_check_command: "echo 'NVIDIA-SMI has failed'"
+lint: |
+  set -e
+  yamllint -c ${MOLECULE_PROJECT_DIRECTORY}/.yamllint .
+  ansible-lint -c ${MOLECULE_PROJECT_DIRECTORY}/.ansible-lint
 verifier:
   name: testinfra
   options:

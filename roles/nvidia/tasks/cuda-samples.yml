@@ -1,0 +1,33 @@
+---
+- name: Check if CUDA samples archive exists
+  ansible.builtin.stat:
+    path: "/opt/packages/cuda-samples-{{ nvidia_cuda_version }}.tar.gz"
+  register: cuda_samples_archive
+  tags:
+    - nvidia
+    - nvidia_cuda
+    - nvidia_samples
+
+- name: Extract CUDA samples from local archive
+  ansible.builtin.unarchive:
+    src: "/opt/packages/cuda-samples-{{ nvidia_cuda_version }}.tar.gz"
+    dest: /usr/local/cuda-samples
+    remote_src: true
+    creates: "/usr/local/cuda-samples/cuda-samples-{{ nvidia_cuda_version }}"
+  when: cuda_samples_archive.stat.exists
+  tags:
+    - nvidia
+    - nvidia_cuda
+    - nvidia_samples
+
+- name: Create symlink for CUDA samples
+  ansible.builtin.file:
+    src: "/usr/local/cuda-samples/cuda-samples-{{ nvidia_cuda_version }}"
+    dest: /usr/local/cuda/samples
+    state: link
+    force: true
+  when: cuda_samples_archive.stat.exists
+  tags:
+    - nvidia
+    - nvidia_cuda
+    - nvidia_samples

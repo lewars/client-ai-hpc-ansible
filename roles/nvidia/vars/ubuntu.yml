@@ -1,0 +1,4 @@
+---
+# Ubuntu specific variables
+nvidia_package_manager: apt
+nvidia_distribution: "{{ ansible_distribution | lower }}{{ ansible_distribution_major_version }}"

@@ -44,20 +44,70 @@ tasks:
     cmds:
       - ansible-lint
 
+  lint:nvidia:
+    desc: Lint only the NVIDIA role
+    cmds:
+      - ansible-lint roles/nvidia
+
   validate:
     desc: Validate Ansible playbooks
     cmds:
       - ansible-playbook --syntax-check playbook.yml
 
+  test:role:destroy:
+    desc: Destroy test instances for a specific role
+    cmds:
+      - cd roles/{{.ROLE}} && molecule destroy
+    requires:
+      vars: [ROLE]
+
   test:role:
     desc: Test a specific role with Molecule using TestInfra
+    deps: [test:role:destroy]
     cmds:
       - cd roles/{{.ROLE}} && molecule test
     requires:
       vars: [ROLE]
 
+  test:nvidia:destroy:
+    desc: Destroy all NVIDIA role test instances
+    cmds:
+      - cd roles/nvidia && molecule destroy
+
+  test:nvidia:
+    desc: Test the NVIDIA role with Molecule
+    deps: [test:nvidia:destroy]
+    cmds:
+      - cd roles/nvidia && molecule test
+
+  test:nvidia:lint:
+    desc: Run only the lint step for the NVIDIA role
+    cmds:
+      - cd roles/nvidia && molecule lint
+
+  test:nvidia:verify:
+    desc: Run only the verify step for the NVIDIA role
+    deps: [test:nvidia:destroy]
+    cmds:
+      - cd roles/nvidia && molecule create
+      - cd roles/nvidia && molecule prepare
+      - cd roles/nvidia && molecule converge
+      - cd roles/nvidia && molecule verify
+
+  test:all:destroy:
+    desc: Destroy all Molecule test instances for all roles
+    cmds:
+      - |
+        for role in roles/*; do
+          if [ -d "$role/molecule" ]; then
+            echo "Cleaning up $role..."
+            cd $role && molecule destroy && cd ../..
+          fi
+        done
+
   test:all:
     desc: Test all roles with Molecule
+    deps: [test:all:destroy]
     cmds:
       - |
         for role in roles/*; do
@@ -104,5 +154,3 @@ tasks:
         find roles/ -type d -name ".ansible-tmp" -exec rm -r {} +
         rm -rf .pytest_cache/
         rm -f dist/*
-
-
