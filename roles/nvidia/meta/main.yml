@@ -1,6 +1,7 @@
 ---
-role_info:
+galaxy_info:  # Change from role_info to galaxy_info
   role_name: nvidia
+  namespace: aifactory
   author: Alistair Y. Lewars
   description: Installs and configures NVIDIA drivers and related components for HPC environments
   company: AI Factory
@@ -15,7 +16,7 @@ role_info:
       versions:
         - noble
 
-  tags:
+  galaxy_tags:  # Change from tags to galaxy_tags
     - nvidia
     - gpu
     - driver
