@@ -17,7 +17,7 @@ tasks:
           echo "Author: Alistair Y. Lewars"
           echo "Current Environment: {{.ENV}}"
 
-  install_uv:
+  install-uv:
     desc: Install 'uv' if not present
     cmds:
       - command -v uv || pip install uv
@@ -73,21 +73,21 @@ tasks:
         echo "Deploying to {{.ENV}} environment"
         ansible-playbook -i inventory/{{.ENV}} playbook.yml
 
-  deploy_lab:
+  deploy-lab:
     desc: Deploy to lab environment
     vars:
       ENV: lab
     cmds:
       - task: deploy
 
-  deploy_dev:
+  deploy-dev:
     desc: Deploy to dev environment
     vars:
       ENV: dev
     cmds:
       - task: deploy
 
-  deploy_prod:
+  deploy-prod:
     desc: Deploy to prod environment
     vars:
       ENV: prod
@@ -104,3 +104,5 @@ tasks:
         find roles/ -type d -name ".ansible-tmp" -exec rm -r {} +
         rm -rf .pytest_cache/
         rm -f dist/*
+
+

@@ -2,6 +2,62 @@
 driver:
   name: podman
 platforms:
-  - name: instance
-    image: quay.io/centos/centos:stream8
+  - name: rhel9-instance
+    image: rockylinux:9
     pre_build_image: true
+    privileged: true
+    command: "/usr/sbin/init"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ${MOLECULE_PROJECT_DIRECTORY}/tests/mock/opt:/opt:ro
+    tmpfs:
+      - /tmp
+      - /run
+    environment:
+      container: podman
+  - name: ubuntu2404-instance
+    image: ubuntu:24.04
+    pre_build_image: true
+    privileged: true
+    command: "/lib/systemd/systemd"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - ${MOLECULE_PROJECT_DIRECTORY}/tests/mock/opt:/opt:ro
+    tmpfs:
+      - /tmp
+      - /run
+    environment:
+      container: podman
+      DEBIAN_FRONTEND: noninteractive
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_PIPELINING: "True"
+  inventory:
+    group_vars:
+      all:
+        # Mock variables for testing - these will create test stubs/mocks
+        # rather than actually trying to install real NVIDIA drivers
+        nvidia_testing_mode: false
+        # Override commands that would normally require actual hardware
+        nvidia_driver_check_command: "echo 'NVIDIA-SMI has failed'"
+verifier:
+  name: testinfra
+  options:
+    v: true
+    s: true
+scenario:
+  test_sequence:
+    - dependency
+    - lint
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - side_effect
+    - verify
+    - cleanup
+    - destroy

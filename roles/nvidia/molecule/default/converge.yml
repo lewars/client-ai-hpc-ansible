@@ -1,8 +1,23 @@
 ---
 - name: Converge
   hosts: all
-  gather_facts: false
+  become: true
+  vars:
+    # Variables for testing override actual installation
+    nvidia_driver_check_command: "echo 'NVIDIA-SMI has failed'"
+    nvidia_local_repo_rpm: "/opt/rpms/nvidia-driver-local-repo-rhel9-570.124.06-1.0-1.x86_64.rpm"
+    nvidia_local_repo_deb: "/opt/rpms/nvidia-driver-local-repo-ubuntu2404-570.124.06_1.0-1_amd64.deb"
+    nvidia_repo_path: "nvidia-driver-local-repo-ubuntu2404-570.124.06"
+    nvidia_ubuntu_repo_name: "ubuntu2404"
+    nvidia_architecture: "amd64"
+    nvidia_install_fabricmanager: true
+
+    # Don't actually reboot during testing
+    nvidia_restart_after_install: false
+
+    # Testing mode to simulate package installation
+    nvidia_testing_mode: true
   tasks:
-    - name: Replace this task with one that validates your content
-      ansible.builtin.debug:
-        msg: "This is the effective test"
+    - name: Include NVIDIA role
+      include_role:
+        name: nvidia
