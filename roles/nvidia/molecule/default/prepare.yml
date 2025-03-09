@@ -32,7 +32,7 @@
         content: |
           [cuda-rhel-x86_64]
           name=cuda-rhel-x86_64
-          baseurl=file:///opt/rpms/
+          baseurl=file:///opt/packages/
           enabled=1
           gpgcheck=0
         dest: "/etc/yum.repos.d/cuda-rhel.repo"

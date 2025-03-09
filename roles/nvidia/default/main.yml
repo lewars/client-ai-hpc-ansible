@@ -1,0 +1,30 @@
+---
+nvidia_driver_version: "570.124.06"
+nvidia_cuda_version: "12.8"
+nvidia_architecture: "x86_64"
+
+# Driver installation options
+nvidia_driver_check_command: "nvidia-smi"
+nvidia_restart_after_install: true
+nvidia_install_from_local_repo: true
+nvidia_install_persistence_daemon: true
+
+# Repository and package paths
+# For RHEL/Rocky Linux 9
+nvidia_local_repo_rpm: "/opt/packages/nvidia-driver-local-repo-rhel9-{{ nvidia_driver_version }}-1.0-1.x86_64.rpm"
+# For Ubuntu 24.04 (Noble Numbat)
+nvidia_local_repo_deb: "/opt/packages/nvidia-driver-local-repo-ubuntu2404-{{ nvidia_driver_version }}_1.0-1_amd64.deb"
+nvidia_repo_path: "nvidia-driver-local-repo-ubuntu2404-{{ nvidia_driver_version }}"
+nvidia_ubuntu_repo_name: "ubuntu2404"
+
+# CUDA Configuration
+nvidia_cuda_initialize: true
+nvidia_cuda_samples: false
+nvidia_enable_cuda_in_path: true
+
+# Fabric Manager (for NVIDIA NVLink and NVSwitch)
+nvidia_install_fabricmanager: false
+nvidia_fabricmanager_enabled: false
+
+# Testing mode for CI/CD
+nvidia_testing_mode: false
