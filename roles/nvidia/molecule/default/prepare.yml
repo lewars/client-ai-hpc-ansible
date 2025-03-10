@@ -11,10 +11,9 @@
         - nvidia_testing_mode | default(true) | bool
         - ansible_os_family == "RedHat"
 
-    - name: Install repository for Mainline kernel and upgrade
+    - name: Update and upgrade packages on Ubuntu
       ansible.builtin.shell:
         cmd: |
-          add-apt-repository -y ppa:cappelikan/ppa &&
           apt update -y && apt upgrade -y
       when:
         - nvidia_testing_mode | default(true) | bool
