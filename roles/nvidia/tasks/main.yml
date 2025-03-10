@@ -1,11 +1,17 @@
 ---
+- name: Include default variables
+  ansible.builtin.include_vars:
+    file: "../defaults/main.yml"
+  when: nvidia_cuda_initialize is not defined
+  tags:
+    - always
+
 - name: Include OS-specific variables
   ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
-    # TODO: (alistair): check if any of this is needed
-    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yml"
-    - "{{ ansible_os_family | lower }}.yml"
-    - "default.yml"
+    - "../vars/{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yml"
+    - "../vars/{{ ansible_os_family | lower }}.yml"
+    - "../vars/default.yml"
   tags:
     - always
 
@@ -19,21 +25,36 @@
     - nvidia
     - nvidia_driver
 
+- name: Check if NVIDIA CUDA driver is already installed
+  ansible.builtin.command: "{{ nvidia_cuda_check_command }}"
+  register: nvidia_cuda_check
+  ignore_errors: true
+  changed_when: false
+  check_mode: false
+  tags:
+    - nvidia
+    - nvidia_cuda
+
 - name: Install prerequisites for NVIDIA driver installation
   ansible.builtin.include_tasks: "prerequisites-{{ ansible_os_family | lower }}.yml"
   when: nvidia_driver_check.rc != 0
+  vars:
+    nouveau_blacklist: "{{ nouveau_blacklist }}"
   tags:
     - nvidia
     - nvidia_driver
+    - nvidia_cuda
+    - nvidia_nouveau
 
 - name: Install NVIDIA driver from local repository
   ansible.builtin.include_tasks: "driver-{{ ansible_os_family | lower }}.yml"
   when:
-    - nvidia_driver_check.rc != 0
     - nvidia_install_from_local_repo | bool
+    - nvidia_driver_check.rc != 0
   tags:
     - nvidia
     - nvidia_driver
+    - nvidia_cuda
 
 - name: Configure CUDA environment
   ansible.builtin.include_tasks: "cuda.yml"

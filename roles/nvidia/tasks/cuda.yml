@@ -1,7 +1,7 @@
 ---
 - name: Create CUDA environment file
   ansible.builtin.template:
-    src: cuda.sh.j2
+    src: ../templates/cuda.sh.j2
     dest: /etc/profile.d/cuda.sh
     mode: '0644'
     owner: root
@@ -12,12 +12,9 @@
 
 - name: Make sure CUDA directory exists and is accessible
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: /usr/local/cuda-{{ nvidia_cuda_version }}
     state: directory
     mode: '0755'
-  with_items:
-    - /usr/local/cuda
-    - /usr/local/cuda-{{ nvidia_cuda_version }}
   when: not nvidia_testing_mode
   tags:
     - nvidia
@@ -28,7 +25,7 @@
     src: /usr/local/cuda-{{ nvidia_cuda_version }}
     dest: /usr/local/cuda
     state: link
-    force: true
+    force: false
   when: not nvidia_testing_mode
   tags:
     - nvidia

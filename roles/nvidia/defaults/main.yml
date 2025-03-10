@@ -4,7 +4,6 @@ nvidia_cuda_version: "12.8"
 nvidia_architecture: "x86_64"
 
 # Driver installation options
-nvidia_driver_check_command: "nvidia-smi"
 nvidia_restart_after_install: true
 nvidia_install_from_local_repo: true
 nvidia_install_persistence_daemon: true
@@ -23,8 +22,8 @@ nvidia_cuda_samples: false
 nvidia_enable_cuda_in_path: true
 
 # Fabric Manager (for NVIDIA NVLink and NVSwitch)
-nvidia_install_fabricmanager: false
-nvidia_fabricmanager_enabled: false
+nvidia_install_fabricmanager: true
+nvidia_fabricmanager_enabled: true
 
 # Testing mode for CI/CD
 nvidia_testing_mode: false

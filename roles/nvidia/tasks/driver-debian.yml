@@ -62,6 +62,17 @@
     - nvidia
     - nvidia_driver
 
+- name: Install NVIDIA Persistence Daemon
+  ansible.builtin.apt:
+    name: nvidia-persistenced
+    state: present
+  when:
+    - nvidia_install_persistence_daemon | bool
+    - not nvidia_testing_mode
+  tags:
+    - nvidia
+    - nvidia_persistence
+
 - name: Install NVIDIA Fabric Manager (optional)
   ansible.builtin.apt:
     name: nvidia-fabricmanager

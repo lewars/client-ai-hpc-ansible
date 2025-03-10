@@ -25,5 +25,17 @@
       debug:
         msg: "Using role path: {{ role_dir }}"
 
+    - name: Include default variables
+      include_vars:
+        file: "{{ role_dir }}/defaults/main.yml"
+
+    - name: Include OS-specific variables
+      include_vars: "{{ item }}"
+      with_first_found:
+        - "{{ role_dir }}/vars/{{ ansible_distribution | lower }}.yml"
+        - "{{ role_dir }}/vars/{{ ansible_os_family | lower }}.yml"
+        - "{{ role_dir }}/vars/default.yml"
+      ignore_errors: true
+
     - name: Include NVIDIA role
       import_tasks: "../../tasks/main.yml"

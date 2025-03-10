@@ -2,21 +2,34 @@
 - name: Install required packages for RHEL/Rocky
   ansible.builtin.dnf:
     name:
-      - kernel-devel-{{ ansible_kernel }}
-      - kernel-headers-{{ ansible_kernel }}
+      - dracut
+      - kernel-devel
+      - kernel-headers
       - gcc
-      - make
-      - dkms
-      - elfutils-libelf-devel
+      - elfutils-devel
+      - vulkan-headers
       - vulkan-loader
+      - vulkan-loader-devel
       - vulkan-tools
       - vulkan-validation-layers
+      - vulkan-volk-devel
     state: present
   tags:
     - nvidia
     - nvidia_packages
 
-- name: Disable Nouveau driver
+- name: Create /etc/modprobe.d directory
+  ansible.builtin.file:
+    path: /etc/modprobe.d
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+  tags:
+    - nvidia
+    - nvidia_nouveau
+
+- name: Blacklist Nouveau kernel module
   ansible.builtin.copy:
     dest: /etc/modprobe.d/blacklist-nouveau.conf
     content: |
@@ -25,14 +38,12 @@
     mode: '0644'
     owner: root
     group: root
-  register: nouveau_blacklist
   tags:
     - nvidia
     - nvidia_nouveau
 
-- name: Update initramfs if Nouveau was disabled
+- name: Update initramfs via dracut
   ansible.builtin.command: dracut --force
-  when: nouveau_blacklist.changed
   tags:
     - nvidia
     - nvidia_nouveau
