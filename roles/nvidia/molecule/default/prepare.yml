@@ -3,6 +3,15 @@
   hosts: all
   gather_facts: true
   tasks:
+    # Install sudo on Rocky Linux
+    - name: Install sudo on Rocky Linux
+      package:
+            name: sudo
+            state: present
+      when:
+        - nvidia_testing_mode | default(true) | bool
+        - ansible_os_family == "RedHat"
+
     - name: Create mock directories
       file:
         path: "{{ item }}"
@@ -162,6 +171,14 @@
 
     - name: Mock package installation for testing
       block:
+        - name: Create mock RPM package directories
+          file:
+            path: "/usr/share/rpm/RPMS"
+            state: directory
+            mode: '0755'
+            recurse: yes
+          when: ansible_os_family == "RedHat"
+
         - name: Create mock NVIDIA package files for RPM-based systems
           file:
             path: "/usr/share/rpm/RPMS/{{ item }}"
@@ -171,6 +188,14 @@
             - "nvidia-persistenced-570.124.06-1.x86_64.rpm"
             - "nvidia-fabricmanager-570.124.06-1.x86_64.rpm"
           when: ansible_os_family == "RedHat"
+
+        - name: Create mock Deb package directories
+          file:
+            path: "/var/lib/dpkg"
+            state: directory
+            mode: '0755'
+            recurse: yes
+          when: ansible_os_family == "Debian"
 
         - name: Create mock NVIDIA package status for Debian-based systems
           lineinfile:
