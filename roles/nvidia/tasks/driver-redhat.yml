@@ -12,7 +12,7 @@
     name: "{{ nvidia_local_repo_rpm }}"
     state: present
     disable_gpg_check: true
-  when: local_repo_rpm.stat.exists and not nvidia_testing_mode
+  when: local_repo_rpm.stat.exists and not nvidia_testing_mode | default(false) | bool
   tags:
     - nvidia
     - nvidia_repo
@@ -25,31 +25,20 @@
     - nvidia
     - nvidia_repo
 
-- name: Install NVIDIA driver and CUDA packages
+# Install NVIDIA driver and CUDA packages
+- name: Install NVIDIA driver packages
   ansible.builtin.dnf:
     name:
       - nvidia-driver
       - nvidia-persistenced
+      - cuda-drivers
       - cuda
     state: present
     disable_gpg_check: true
-  when: repo_file.stat.exists and not nvidia_testing_mode
+  when: repo_file.stat.exists and not nvidia_testing_mode | default(false) | bool
   tags:
     - nvidia
     - nvidia_driver
-
-- name: Install NVIDIA Persistence Daemon
-  ansible.builtin.dnf:
-    name: nvidia-persistenced
-    state: present
-    disable_gpg_check: true
-  when:
-    - repo_file.stat.exists
-    - nvidia_install_persistence_daemon | bool
-    - not nvidia_testing_mode
-  tags:
-    - nvidia
-    - nvidia_persistence
 
 - name: Install NVIDIA Fabric Manager
   ansible.builtin.dnf:
@@ -58,8 +47,21 @@
     disable_gpg_check: true
   when:
     - repo_file.stat.exists
-    - nvidia_install_fabricmanager | bool
-    - not nvidia_testing_mode
+    - nvidia_install_fabricmanager | default(true) | bool
+    - not nvidia_testing_mode | default(false) | bool
   tags:
     - nvidia
     - nvidia_fabricmanager
+
+- name: Install NVIDIA Persistence Daemon
+  ansible.builtin.dnf:
+    name: nvidia-persistenced
+    state: present
+    disable_gpg_check: true
+  when:
+    - repo_file.stat.exists
+    - nvidia_install_persistence_daemon | default(true) | bool
+    - not nvidia_testing_mode | default(false) | bool
+  tags:
+    - nvidia
+    - nvidia_persistence

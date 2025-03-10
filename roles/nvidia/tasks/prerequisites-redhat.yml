@@ -42,8 +42,17 @@
     - nvidia
     - nvidia_nouveau
 
+
+- name: Debug nvidia_testing_mode variable
+  ansible.builtin.debug:
+    msg: "DEBUG: nvidia_testing_mode: {{ nvidia_testing_mode }}"
+  tags:
+    - nvidia
+    - nvidia_debug
+
 - name: Update initramfs via dracut
   ansible.builtin.command: dracut --force
+  when: not nvidia_testing_mode
   tags:
     - nvidia
     - nvidia_nouveau

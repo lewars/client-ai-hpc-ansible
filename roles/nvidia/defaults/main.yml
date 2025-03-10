@@ -1,12 +1,16 @@
 ---
+# Driver and CUDA version
 nvidia_driver_version: "570.124.06"
 nvidia_cuda_version: "12.8"
 nvidia_architecture: "x86_64"
 
-# Driver installation options
+# Installation options
 nvidia_restart_after_install: true
 nvidia_install_from_local_repo: true
 nvidia_install_persistence_daemon: true
+
+nvidia_install_cuda_toolkit: false
+nvidia_install_cuda_driver_only: true
 
 # Repository and package paths
 # For RHEL/Rocky Linux 9
