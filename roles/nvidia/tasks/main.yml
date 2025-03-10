@@ -1,10 +1,4 @@
 ---
-- name: Include default variables
-  ansible.builtin.include_vars:
-    file: "../defaults/main.yml"
-  when: nvidia_driver_version is not defined
-  tags:
-    - always
 
 - name: Include OS-specific variables
   ansible.builtin.include_vars: "{{ item }}"

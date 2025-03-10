@@ -37,5 +37,9 @@
         - "{{ role_dir }}/vars/default.yml"
       ignore_errors: true
 
+    - name: Set testing variables
+      set_fact:
+        nvidia_testing_mode: true
+
     - name: Include NVIDIA role
       import_tasks: "../../tasks/main.yml"

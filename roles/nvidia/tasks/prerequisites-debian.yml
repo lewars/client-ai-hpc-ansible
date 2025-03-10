@@ -37,6 +37,7 @@
 
 - name: Update initramfs via update-initramfs
   ansible.builtin.command: update-initramfs -u
+  when: not nvidia_testing_mode
   tags:
     - nvidia
     - nvidia_nouveau

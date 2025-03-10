@@ -1,12 +1,18 @@
 ---
+# - name: Install basic dependency packages first
+#   ansible.builtin.dnf:
+#     name:
+#       - libgomp
+#       - libgcc
+#     state: present
+#   tags:
+#     - nvidia
+#     - nvidia_packages
+
 - name: Install required packages for RHEL/Rocky
   ansible.builtin.dnf:
     name:
-      - dracut
       - kernel-devel
-      - kernel-headers
-      - gcc
-      - elfutils-devel
       - vulkan-headers
       - vulkan-loader
       - vulkan-loader-devel
