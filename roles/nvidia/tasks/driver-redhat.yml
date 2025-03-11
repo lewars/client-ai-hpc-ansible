@@ -12,7 +12,7 @@
     name: "{{ nvidia_local_repo_rpm }}"
     state: present
     disable_gpg_check: true
-  when: local_repo_rpm.stat.exists and not nvidia_testing_mode | default(false) | bool
+  when: local_repo_rpm.stat.exists
   tags:
     - nvidia
     - nvidia_repo
@@ -32,10 +32,9 @@
       - nvidia-driver
       - nvidia-persistenced
       - cuda-drivers
-      - cuda
     state: present
     disable_gpg_check: true
-  when: repo_file.stat.exists and not nvidia_testing_mode | default(false) | bool
+  when: repo_file.stat.exists
   tags:
     - nvidia
     - nvidia_driver
@@ -48,7 +47,6 @@
   when:
     - repo_file.stat.exists
     - nvidia_install_fabricmanager | default(true) | bool
-    - not nvidia_testing_mode | default(false) | bool
   tags:
     - nvidia
     - nvidia_fabricmanager
@@ -61,7 +59,6 @@
   when:
     - repo_file.stat.exists
     - nvidia_install_persistence_daemon | default(true) | bool
-    - not nvidia_testing_mode | default(false) | bool
   tags:
     - nvidia
     - nvidia_persistence
