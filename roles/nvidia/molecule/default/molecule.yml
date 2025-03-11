@@ -8,22 +8,16 @@ platforms:
     pre_build_image: true
     command: "sleep 1000000"
     volumes:
-      - /opt/packages:/opt/packages:Z
+      - "${MOLECULE_PROJECT_DIRECTORY}/molecule/default/files:/opt/packages"
     privileged: true
-    # tmpfs:
-    #   - /tmp
-    #   - /run
 
   - name: ubuntu2404-instance
     image: geerlingguy/docker-ubuntu2404-ansible
     pre_build_image: true
     command: "sleep 1000000"
     volumes:
-      - /opt/packages:/opt/packages:Z
+      - "${MOLECULE_PROJECT_DIRECTORY}/molecule/default/files:/opt/packages"
     privileged: true
-    # tmpfs:
-    #   - /tmp
-    #   - /run
     environment:
       DEBIAN_FRONTEND: noninteractive
 
