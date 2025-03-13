@@ -1,0 +1,79 @@
+---
+- name: Install Enroot dependencies (Debian/Ubuntu)
+  ansible.builtin.apt:
+    name: "{{ enroot_dependencies.debian }}"
+    state: present
+    update_cache: true
+  when: not enroot_testing_mode
+  tags:
+    - enroot
+    - enroot_dependencies
+
+- name: Download Enroot DEBs
+  ansible.builtin.get_url:
+    url: "{{ enroot_repo_url }}/v{{ enroot_version }}/{{ item }}_{{ enroot_version }}-1_amd64.deb"
+    dest: "/tmp/{{ item }}_{{ enroot_version }}.deb"
+    mode: '0644'
+  loop: "{{ enroot_packages }}"
+  when: 
+    - enroot_install_method == 'package'
+    - not enroot_testing_mode
+  tags:
+    - enroot
+    - enroot_download
+
+- name: Install Enroot DEBs
+  ansible.builtin.apt:
+    deb: "/tmp/{{ item }}_{{ enroot_version }}.deb"
+    state: present
+  loop: "{{ enroot_packages }}"
+  when: 
+    - enroot_install_method == 'package'
+    - not enroot_testing_mode
+  tags:
+    - enroot
+    - enroot_install
+
+- name: Clean up temporary files
+  ansible.builtin.file:
+    path: "/tmp/{{ item }}_{{ enroot_version }}.deb"
+    state: absent
+  loop: "{{ enroot_packages }}"
+  when: enroot_install_method == 'package'
+  tags:
+    - enroot
+    - enroot_cleanup
+
+- name: Clone Enroot repository (source installation)
+  ansible.builtin.git:
+    repo: "https://github.com/NVIDIA/enroot.git"
+    dest: "/tmp/enroot"
+    version: "v{{ enroot_version }}"
+  when: 
+    - enroot_install_method == 'source'
+    - not enroot_testing_mode
+  tags:
+    - enroot
+    - enroot_source
+
+- name: Build and install Enroot from source
+  ansible.builtin.shell:
+    cmd: |
+      cd /tmp/enroot
+      make
+      make install
+  when: 
+    - enroot_install_method == 'source'
+    - not enroot_testing_mode
+  tags:
+    - enroot
+    - enroot_source
+
+- name: Clean up source directory
+  ansible.builtin.file:
+    path: "/tmp/enroot"
+    state: absent
+  when: enroot_install_method == 'source'
+  tags:
+    - enroot
+    - enroot_cleanup
