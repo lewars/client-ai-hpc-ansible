@@ -1,0 +1,99 @@
+---
+- name: Include OS-specific variables
+  ansible.builtin.include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_os_family | lower }}.yml"
+    - "default.yml"
+  tags:
+    - always
+
+- name: Debug enroot variables
+  ansible.builtin.debug:
+    msg: |
+      ==== Enroot Role Configuration ====
+      enroot_version: {{ enroot_version }}
+      enroot_install_method: {{ enroot_install_method }}
+      ansible_os_family: {{ ansible_os_family }}
+      ansible_distribution: {{ ansible_distribution }}
+  tags:
+    - always
+    - debug
+
+- name: Check if Enroot is already installed
+  ansible.builtin.command: which enroot
+  register: enroot_check
+  ignore_errors: true
+  changed_when: false
+  check_mode: false
+  tags:
+    - enroot
+
+- name: Include OS-specific installation tasks
+  ansible.builtin.include_tasks: "install-{{ ansible_os_family | lower }}.yml"
+  when: enroot_check.rc != 0
+  tags:
+    - enroot
+    - enroot_install
+
+- name: Create Enroot configuration directory
+  ansible.builtin.file:
+    path: "{{ enroot_config_dir }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ enroot_user }}"
+    group: "{{ enroot_group }}"
+  tags:
+    - enroot
+    - enroot_config
+
+- name: Configure Enroot
+  ansible.builtin.template:
+    src: enroot.conf.j2
+    dest: "{{ enroot_config_dir }}/enroot.conf"
+    mode: '0644'
+    owner: "{{ enroot_user }}"
+    group: "{{ enroot_group }}"
+  tags:
+    - enroot
+    - enroot_config
+
+- name: Configure system limits for Enroot
+  ansible.builtin.template:
+    src: limits.conf.j2
+    dest: "/etc/security/limits.d/enroot.conf"
+    mode: '0644'
+    owner: "root"
+    group: "root"
+  tags:
+    - enroot
+    - enroot_limits
+
+- name: Create Enroot data directory
+  ansible.builtin.file:
+    path: "{{ enroot_data_dir }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ enroot_user }}"
+    group: "{{ enroot_group }}"
+  tags:
+    - enroot
+    - enroot_config
+
+- name: Create Enroot cache directory
+  ansible.builtin.file:
+    path: "{{ enroot_cache_dir }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ enroot_user }}"
+    group: "{{ enroot_group }}"
+  tags:
+    - enroot
+    - enroot_config
+
+- name: Configure Enroot hooks (if enabled)
+  ansible.builtin.include_tasks: "hooks.yml"
+  when: enroot_enable_hooks | bool
+  tags:
+    - enroot
+    - enroot_hooks
