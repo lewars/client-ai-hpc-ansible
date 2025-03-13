@@ -1,0 +1,32 @@
+# Enroot configuration file
+# {{ ansible_managed }}
+
+# Data directory
+ENROOT_DATA_PATH="{{ enroot_data_dir }}"
+
+# Cache directory
+ENROOT_CACHE_PATH="{{ enroot_cache_dir }}"
+
+# Runtime directory
+ENROOT_RUNTIME_PATH="/run/enroot"
+
+# Maximum number of processes
+ENROOT_MAX_PROCESSES={{ enroot_max_processes }}
+
+# Maximum number of open files
+ENROOT_MAX_OPEN_FILES={{ enroot_max_open_files }}
+
+# Default container registry
+ENROOT_REGISTRY_DEFAULT="docker://docker.io"
+
+# Use zstd compression for temporary files
+ENROOT_TEMP_COMPRESS="zstd"
+
+# Enable unprivileged mounting
+ENROOT_ALLOW_UNPRIVILEGED_MOUNTS=1
+
+# Enable unprivileged networking configuration
+ENROOT_ALLOW_UNPRIVILEGED_NETNS=1
+
+# Enable GPU support
+ENROOT_ALLOW_GPUS=1
