@@ -1,0 +1,60 @@
+---
+# Enroot version to install
+enroot_version: "3.4.1"
+
+# Installation method: 'package' or 'source'
+enroot_install_method: "package"
+
+# Repository configuration (for package installation)
+enroot_repo_url: "https://github.com/NVIDIA/enroot/releases/download"
+
+# Packages to install
+enroot_packages:
+  - enroot
+  - enroot-conda
+
+# Dependencies
+enroot_dependencies:
+  debian:
+    - curl
+    - gnupg2
+    - squashfs-tools
+    - parallel
+    - jq
+    - fuse-overlayfs
+    - squashfuse
+    - coreutils
+  redhat:
+    - curl
+    - gnupg2
+    - squashfs-tools
+    - parallel
+    - jq
+    - fuse-overlayfs
+    - squashfuse
+    - coreutils
+
+# Configuration options
+enroot_config_dir: "/etc/enroot"
+enroot_data_dir: "/var/lib/enroot"
+enroot_cache_dir: "/var/cache/enroot"
+
+# User and group settings
+enroot_user: "root"
+enroot_group: "root"
+
+# Enable CUDA support
+enroot_enable_cuda: true
+
+# Enable NVIDIA Container Runtime integration
+enroot_enable_nvidia_container: true
+
+# Container limits
+enroot_max_processes: 65536
+enroot_max_open_files: 65536
+
+# Hook settings
+enroot_enable_hooks: true
+
+# Testing mode for CI/CD
+enroot_testing_mode: false
