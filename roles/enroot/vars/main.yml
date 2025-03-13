@@ -1,0 +1,13 @@
+---
+# Common variables for Enroot role
+
+# Package naming conventions
+enroot_package_prefix: "enroot"
+enroot_package_suffix: "amd64"
+
+# Default installation paths
+enroot_bin_path: "/usr/bin/enroot"
+enroot_libexec_path: "/usr/libexec/enroot"
+
+# Default hooks directory
+enroot_hooks_dir: "/etc/enroot/hooks.d"
